@@ -19,18 +19,32 @@ const addGoal = asyncHandler(async (req, res) => {
   } catch (error) {
     throw new Error('Invalid data!');
   }
-  
-
-  res.json({ msg: 'Add a goal' });
 });
 
-const updateGoal = asyncHandler(async (req, res) =>
-  res.json({ msg: `Update goal ${req.params.id}` })
+const updateGoal = asyncHandler(async (req, res) => {
+  const goal = await Goal.findById(req.params.id);
+  if(goal){
+    goal.text = req.body.text;
+    const updatedGoal = await goal.save();
+    res.json(updatedGoal);
+  }else{
+    res.status(404)
+    throw new Error('Goal not found');
+  }
+}
 );
 
 const deleteGoal = asyncHandler(async (req, res) =>
-  res.json({ msg: `Delete goal ${req.params.id}` })
-);
+{
+const goal = await Goal.findById(req.params.id);
+if(goal){
+  await goal.remove();
+  res.json('Goal removed!');
+}else{
+  res.status(404)
+  throw new Error('Goal not found');
+}
+});
 
 module.exports = {
   getGoals,
