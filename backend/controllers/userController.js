@@ -9,7 +9,7 @@ const registerUser = asyncHandler( async (req, res) => {
     const userExists = await User.findOne({email});
 
     if(userExists){
-        res.json(400);
+        res.status(400);
         throw new Error('Email already in use.');
     }
 
