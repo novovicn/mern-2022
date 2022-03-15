@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Goal = require('../models/goalModel');
 
 const getGoals = asyncHandler(async (req, res) => {
-  
+
   const goals = await Goal.find({ user: req.userId });
   res.status(200).json(goals);
 });
@@ -23,8 +23,16 @@ const addGoal = asyncHandler(async (req, res) => {
 });
 
 const updateGoal = asyncHandler(async (req, res) => {
+  
   const goal = await Goal.findById(req.params.id);
+
+  console.log(String(goal.user), req.userId);
+  
   if (goal) {
+    if(goal.user != req.userId){
+      res.status(401)
+      throw new Error('Users can update only their goals');
+    }
     goal.text = req.body.text;
     const updatedGoal = await goal.save();
     res.json(updatedGoal);

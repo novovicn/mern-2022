@@ -17,6 +17,9 @@ const protect = asyncHandler( async (req, res, next) => {
             res.status(401)
             throw new Error('Invalid token.');
         }
+    }else{
+        res.status(401);
+        throw new Error('No token found')
     }
 })
 
