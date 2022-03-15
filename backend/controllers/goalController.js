@@ -26,8 +26,6 @@ const updateGoal = asyncHandler(async (req, res) => {
   
   const goal = await Goal.findById(req.params.id);
 
-  console.log(String(goal.user), req.userId);
-  
   if (goal) {
     if(goal.user != req.userId){
       res.status(401)
@@ -45,6 +43,10 @@ const updateGoal = asyncHandler(async (req, res) => {
 const deleteGoal = asyncHandler(async (req, res) => {
   const goal = await Goal.findById(req.params.id);
   if (goal) {
+    if(goal.user != req.userId){
+      res.status(401)
+      throw new Error('Users can delete only their goals');
+    }
     await goal.remove();
     res.json('Goal removed!');
   } else {
