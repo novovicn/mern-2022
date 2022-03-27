@@ -1,11 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaUser } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import Spinner from '../components/Spinner';
+import { reset, login} from '../features/auth/authSlice';
 
 function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password2: '',
   });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); 
+
+  const { user, success, loading, error, message } = useSelector(
+    (state) => state.auth
+  );
 
   const { email, password } = formData;
   const dataChangeHandler = (e) => {
@@ -15,9 +27,30 @@ function Login() {
     }));
   };
 
+  useEffect(() => {
+    if (error) {
+      toast.error(message)
+    }
+    if (success || user) {
+      navigate('/')
+    }
+    dispatch(reset())
+  }, [user, error, success, message, navigate, dispatch])
+
   const submitHandler = (e) => {
       e.preventDefault();
-      console.log(email, password);
+      
+      const userData = {
+        email, 
+        password
+      }
+
+      dispatch(login(userData));
+
+  }
+
+  if(loading){
+    return <Spinner />
   }
 
   return (
@@ -45,7 +78,7 @@ function Login() {
               value={password}
             />
           </div>
-          <button type='submit' className='btn btn-block'>REGISTER</button>
+          <button type='submit' className='btn btn-block'>LOGIN</button>
         </form>
       </section>
     </>
