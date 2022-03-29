@@ -9,7 +9,7 @@ import { reset, login} from '../features/auth/authSlice';
 function Login() {
   const [formData, setFormData] = useState({
     email: '',
-    password2: '',
+    password: '',
   });
 
   const dispatch = useDispatch();
